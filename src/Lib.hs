@@ -1,6 +1,5 @@
-module Lib
-    ( someFunc
-    ) where
+module Lib ( play ) where
 
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
+play :: Int -> Int -> Int -> [Int]
+play 1 _ _ = [1]
+play _ _ _ = []
