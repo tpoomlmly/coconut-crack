@@ -31,6 +31,21 @@ crack maxPieces players = crack' maxPieces (head rotated) : tail rotated
 runRound :: Int -> Int -> [Player] -> [Player]
 runRound coconuts maxPieces players = crack maxPieces $ iterate coconut players !! max 0 coconuts
 
+isLoser :: Player -> Bool
+isLoser (Crack _ pieceCount _) | pieceCount < 1 = True
+isLoser _                      = False
+
+playerId :: Player -> Int
+playerId (Coconut n)   = n
+playerId (Crack n _ _) = n
+
+-- |Simulates the game until the last player stands. Returns the players in the order that they go out.
 play :: Int -> Int -> Int -> [Int]
-play 1 _ _ = [1]
-play _ _ _ = []
+play playerCount coconuts maxPieces = play' coconuts maxPieces $ take playerCount $ map Coconut [1..]
+  where
+    play' :: Int -> Int -> [Player] -> [Int]
+    play' _ _ [] = []
+    play' coconuts maxPieces players = playerId loser : play' coconuts maxPieces survivors
+      where
+        -- Run rounds until someone is eliminated. They'll be at the head of the list when that happens.
+        loser : survivors = head $ dropWhile (not . isLoser . head) $ iterate (runRound coconuts maxPieces) players
