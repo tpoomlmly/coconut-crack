@@ -1,5 +1,5 @@
 name:                coconut-crack
-version:             0.1.0.0
+version:             1.0
 github:              "tpoomlmly/coconut-crack"
 license:             MIT
 author:              "Tommy Poll"
@@ -35,14 +35,3 @@ executables:
     dependencies:
     - coconut-crack
     - optparse-applicative
-
-tests:
-  coconut-crack-test:
-    main:                Spec.hs
-    source-dirs:         test
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - coconut-crack
