@@ -27,6 +27,9 @@ crack maxPieces players = crack' maxPieces (head rotated) : tail rotated
     crack' maxPieces (Coconut playerNum)                = Crack playerNum maxPieces 1
     crack' _         (Crack playerNum pieceCount piece) = Crack playerNum (pieceCount-1) (piece-1)
 
+-- |Simulates 1 round of the game - by default coconut-coconut-coconut-crack.
+runRound :: Int -> Int -> [Player] -> [Player]
+runRound coconuts maxPieces players = crack maxPieces $ iterate coconut players !! max 0 coconuts
 
 play :: Int -> Int -> Int -> [Int]
 play 1 _ _ = [1]
