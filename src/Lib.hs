@@ -7,8 +7,12 @@ data Player = Coconut PlayerNum
             | Crack PlayerNum Int Int
 
 rotateList :: [a] -> [a]
-rotateList [] = []
+rotateList []     = []
 rotateList (x:xs) = xs ++ [x]
+
+unrotateList :: [a] -> [a]
+unrotateList [] = []
+unrotateList xs = last xs : take (length xs - 1) xs
 
 -- |Performs the 'coconut' action - moves round to the next coconut fragment.
 coconut :: [Player] -> [Player]
@@ -16,6 +20,13 @@ coconut (Crack playerNum pieceCount piece : players)
   | piece == pieceCount = rotateList (Crack playerNum pieceCount 1 : players)
   | otherwise           = Crack playerNum pieceCount (piece+1) : players
 coconut players = rotateList players
+
+-- |Shifts the players round backwards so that the previous head is the next one to be coconutted.
+uncoconut :: [Player] -> [Player]
+uncoconut (player@(Crack playerNum pieceCount piece) : players)
+  | piece == 1 = unrotateList $ player:players
+  | otherwise  = Crack playerNum pieceCount (piece-1) : players
+uncoconut players = unrotateList players
 
 -- |Performs the 'crack' action - moves round and cracks the next coconut.
 crack :: Int -> [Player] -> [Player]
@@ -45,7 +56,7 @@ play playerCount coconuts maxPieces = play' coconuts maxPieces $ take playerCoun
   where
     play' :: Int -> Int -> [Player] -> [Int]
     play' _ _ [] = []
-    play' coconuts maxPieces players = playerId loser : play' coconuts maxPieces survivors
+    play' coconuts maxPieces players = playerId loser : play' coconuts maxPieces (uncoconut survivors)
       where
         -- Run rounds until someone is eliminated. They'll be at the head of the list when that happens.
         loser : survivors = head $ dropWhile (not . isLoser . head) $ iterate (runRound coconuts maxPieces) players
